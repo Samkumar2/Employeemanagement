@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,13 @@ public class EmployeController {
     public List<EmployeEntity> get(){
         return employeService.get();
     }
+    @GetMapping("/get/{id}")
+    
+        public Optional<EmployeEntity> getEmployeEntityById(@PathVariable("id")Long id){
+                    return employeService.getemEmployeEntityById(id);
+        }
+    
+    
 
     @GetMapping("/name/{name}/age/{age}")
     public List<EmployeEntity> getNameAndAge(@PathVariable("name") String name,@PathVariable("age") Integer age){
