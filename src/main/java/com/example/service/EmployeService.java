@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.Exception.UserNotFoundException;
 import com.example.entity.EmployeEntity;
 import com.example.repository.EmployeRepository;
 @Service
@@ -22,9 +23,12 @@ public class EmployeService {
         return employeRepository.findAll();
     }
     
-    public Optional<EmployeEntity> getemEmployeEntityById(Long id ){
+    public Optional<EmployeEntity> getemEmployeEntityById(Long id ) throws UserNotFoundException{
         Optional<EmployeEntity> employeEntity = employeRepository.findById(id);
 
+            if(!employeEntity.isPresent()){
+                throw new UserNotFoundException("User not found in the Repository");
+            }
         return employeEntity;
     }
     
@@ -33,19 +37,19 @@ public class EmployeService {
         return employeRepository.findByNameAndAge(name,age);
     }
 
-    public EmployeEntity update(Long id, EmployeEntity updatedEmploye) {
-        EmployeEntity existingEmploye = employeRepository.findById(id).orElse(null);
-        if (existingEmploye != null) {
-            
-            existingEmploye.setName(updatedEmploye.getName());
-            existingEmploye.setAge(updatedEmploye.getAge());
+    public EmployeEntity update(Long id, EmployeEntity employeEntity)throws UserNotFoundException {
+       Optional<EmployeEntity> OptionalEmployeEntity = employeRepository.findById(id);
 
-            return employeRepository.save(existingEmploye);
+            if(!OptionalEmployeEntity.isPresent()){
+                throw new UserNotFoundException("User not found in the Repository enter the correct id enter correct id");
+            }
+            employeEntity.setId(id);
+            return employeRepository.save(employeEntity);
 
     }
-    return null;
+  
 
-}
+
 public boolean delete(Long id) {
         try {
             employeRepository.deleteById(id);
