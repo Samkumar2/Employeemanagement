@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.example.Exception.UserNotFoundException;
 import com.example.entity.EmployeEntity;
 import com.example.service.EmployeService;
 @RequestMapping("/employee")
@@ -36,19 +38,30 @@ public class EmployeController {
     @GetMapping("/get/{id}")
     
         public Optional<EmployeEntity> getEmployeEntityById(@PathVariable("id")Long id){
-                    return employeService.getemEmployeEntityById(id);
+            try{
+                return employeService.getemEmployeEntityById(id);
+            } catch(UserNotFoundException ex ){
+                throw new  ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+            }
+                  
         }
     
     
 
-    @GetMapping("/name/{name}/age/{age}")
+    @GetMapping("/name/{name}/age/{age}") 
     public List<EmployeEntity> getNameAndAge(@PathVariable("name") String name,@PathVariable("age") Integer age){
         return employeService.getNameAndAge(name,age);
     
     }
     @PutMapping("/update/{id}")
 public EmployeEntity update(@PathVariable("id") Long id, @RequestBody EmployeEntity updatedEmploye) {
-    return employeService.update(id, updatedEmploye);
+    try{
+         return employeService.update(id, updatedEmploye);
+    }
+    catch(UserNotFoundException ex){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+   
 }
 @DeleteMapping("/delete/{id}")
  public ResponseEntity<String> delete(@PathVariable("id") Long id) {
